@@ -71,6 +71,18 @@ app.post("/notes",async(req,res)=>{
     })
 })
 
+
+app.get("/notes", async (req, res) => {
+
+    const notes = await Note.find();
+  
+    res.json({
+      success: true,
+      message: "Notes fetched successfully",
+      data: notes
+    })
+  })
+
 app.get("/notes/:id",async(req,res)=>{
     const {id}=req.params;
 
