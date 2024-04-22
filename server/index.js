@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import mongoose, {model,Schema} from 'mongoose'
+import mongoose  from 'mongoose'
+import Note from './models/Note.js'
 dotenv.config();
 
 
@@ -15,13 +16,7 @@ const connectDB=async()=>{
 }
 connectDB();
 
-const notesSchema=new Schema({
-    title:String,
-    content:String,
-    category:String
 
-})
-const Note=model('Note',notesSchema);
 
 
 app.get("/health",(req,res)=>{
@@ -35,6 +30,30 @@ app.get("/health",(req,res)=>{
 
 app.post("/notes",async(req,res)=>{
     const {title,content,category}=req.body;
+
+    if(!title){
+        return res.json({
+            success:false,
+            message:"title is required",
+            data:null
+        })
+    }
+
+    if(!content){
+        return res.json({
+            success:false,
+            message:"content is required",
+            data:null
+        })
+    }
+
+    if(!category){
+        return res.json({
+            success:false,
+            message:"category is required",
+            data:null
+        })
+    }
 
     const newNote =await Note.create({
         "title":title,
@@ -52,9 +71,10 @@ app.post("/notes",async(req,res)=>{
     })
 })
 
-app.get("/notes",async(req,res)=>{
+app.get("/notes/:id",async(req,res)=>{
+    const {id}=req.params;
 
-    const notes=await Note.find()
+    const notes=await Note.findById(id);
     res.json({
         success:true,
         message:"Notes fetched sucessfully",
